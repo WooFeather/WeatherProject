@@ -114,9 +114,14 @@ final class WeatherViewController: UIViewController {
             } else {
                 print("❌SYSTEM DENIED")
                 self.setDefaultRegionAndAnnotation()
+                
                 DispatchQueue.main.async {
-                    // TODO: 사용자에게 알럿 띄우고 설정으로 이동하기
-                    
+                    self.showAlert(title: "위치서비스 사용 불가", message: "위치 서비스를 사용할 수 없습니다.\n기기의 '설정->개인정보 보호'에서 위치 서비스를 켜주세요.", button: "설정으로 이동", isCancelButton: true) {
+                        // 설정앱으로 이동
+                        if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
+                            UIApplication.shared.open(appSettings)
+                        }
+                    }
                 }
             }
         }
@@ -130,12 +135,19 @@ final class WeatherViewController: UIViewController {
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.requestWhenInUseAuthorization()
         case .denied:
-            // TODO: 사용자에게 알럿 띄우고 설정으로 이동하기
             print("❌DENIED")
             setDefaultRegionAndAnnotation()
+            
+            DispatchQueue.main.async {
+                self.showAlert(title: "위치서비스 사용 불가", message: "위치 서비스를 사용할 수 없습니다.\n기기의 '설정->개인정보 보호'에서 위치 서비스를 켜주세요.", button: "설정으로 이동", isCancelButton: true) {
+                    // 설정앱으로 이동
+                    if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
+                        UIApplication.shared.open(appSettings)
+                    }
+                }
+            }
         case .authorizedWhenInUse:
             print("✅AUTHORIZED")
-            
             locationManager.startUpdatingLocation()
         default:
             print("권한 확인 실패")
@@ -148,6 +160,9 @@ final class WeatherViewController: UIViewController {
         annotation.coordinate = center
         
         mapView.setRegion(region, animated: true)
+        
+        // 이전의 annotations 삭제
+        mapView.removeAnnotations(mapView.annotations)
         mapView.showAnnotations([annotation], animated: true)
     }
     
@@ -158,7 +173,10 @@ final class WeatherViewController: UIViewController {
         annotation.coordinate = coordinate
         
         mapView.setRegion(region, animated: true)
+        
         DispatchQueue.main.async {
+            // 이전의 annotations 삭제
+            self.mapView.removeAnnotations(self.mapView.annotations)
             self.mapView.showAnnotations([annotation], animated: true)
         }
     }
@@ -178,7 +196,6 @@ extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
         // TODO: OpenWeatherAPI 호출
-        // TODO: 현재 위치에 시스템 어노테이션 표시
         
         if let coordinate = locations.last?.coordinate {
             setRegionAndAnnotation(center: coordinate)
