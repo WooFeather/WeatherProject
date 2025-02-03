@@ -5,6 +5,8 @@
 //  Created by Jack on 2/3/25.
 //
 
+// DispatchQueue.main.async { } 코드가 많은 이유는 Thread관련 오류가 계속 떠서 일단 UI그리는 코드엔 다 붙여놨는데, 시뮬레이터로 테스틀했을때만 발생하는듯합니다.
+
 import UIKit
 import CoreLocation
 import MapKit
@@ -183,9 +185,11 @@ final class WeatherViewController: UIViewController {
         
         mapView.setRegion(region, animated: true)
         
-        // 이전의 annotations 삭제
-        mapView.removeAnnotations(mapView.annotations)
-        mapView.showAnnotations([annotation], animated: true)
+        DispatchQueue.main.async {
+            // 이전의 annotations 삭제
+            self.mapView.removeAnnotations(self.mapView.annotations)
+            self.mapView.showAnnotations([annotation], animated: true)
+        }
     }
     
     private func setDefaultRegionAndAnnotation() {
