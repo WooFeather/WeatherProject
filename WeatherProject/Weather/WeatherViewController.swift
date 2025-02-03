@@ -214,18 +214,22 @@ final class WeatherViewController: UIViewController {
 //                self.humidity = success.main.humidity
 //                self.windSpeed = success.wind.speed
                 
-                self.weatherInfoLabel.text =
-                """
-                \(Date().toString())
-                현재온도: \(success.main.temp)°C
-                최저온도: \(success.main.minTemp)°C
-                최고온도: \(success.main.maxTemp)°C
-                풍속: \(success.wind.speed)m/s
-                습도: \(success.main.humidity)%
-                """
+                DispatchQueue.main.async {
+                    self.weatherInfoLabel.text =
+                    """
+                    \(Date().toString())
+                    현재온도: \(success.main.temp)°C
+                    최저온도: \(success.main.minTemp)°C
+                    최고온도: \(success.main.maxTemp)°C
+                    풍속: \(success.wind.speed)m/s
+                    습도: \(success.main.humidity)%
+                    """
+                }
             case .failure(_):
-                self.showAlert(title: "네트워크 오류", message: "네트워크 오류로 날씨정보를 가져올 수 없습니다.", button: "닫기") {
-                    self.dismiss(animated: true)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "네트워크 오류", message: "네트워크 오류로 날씨정보를 가져올 수 없습니다.", button: "닫기") {
+                        self.dismiss(animated: true)
+                    }
                 }
             }
         }
@@ -238,7 +242,9 @@ final class WeatherViewController: UIViewController {
     
     @objc private func refreshButtonTapped() {
         // 이렇게 날씨정보만 다시 조회해도 될까요?
-        self.weatherInfoLabel.text = "날씨 정보를 불러오는 중..."
+        DispatchQueue.main.async {
+            self.weatherInfoLabel.text = "날씨 정보를 불러오는 중..."
+        }
         let coordinate = locationManager.location?.coordinate
         callRequest(latitude: coordinate?.latitude ?? 0.0, longitude: coordinate?.longitude ?? 0.0)
         
