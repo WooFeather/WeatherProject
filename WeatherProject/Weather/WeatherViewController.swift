@@ -10,6 +10,8 @@ import CoreLocation
 import MapKit
 import SnapKit
 
+import Alamofire
+
 final class WeatherViewController: UIViewController {
      
     private let mapView: MKMapView = {

@@ -13,21 +13,18 @@ final class NetworkManager {
     
     private init() { }
     
-    func callOpenWeatherAPI<T: Decodable>(api: OpenWeatherRequest,
-                                   type: T.Type,
-                                   completionHandler: @escaping (T) -> Void,
-                                   failHandler: @escaping () -> Void)
-    {
+    func callOpenWeatherAPI(api: OpenWeatherRequest, completionHandler: @escaping (Result<Weather,AFError>) -> Void) {
         AF.request(api.endpoint, method: api.method)
-            .responseDecodable(of: T.self) { response in
+            .validate(statusCode: 200..<500)
+            .responseDecodable(of: Weather.self) { response in
                 print(api.endpoint)
                 switch response.result {
                 case .success(let value):
                     print("✅ SUCCESS")
-                    completionHandler(value)
+                    completionHandler(.success(value))
                 case .failure(let error):
                     print("❌ FAIL \(error)")
-                    failHandler()
+                    completionHandler(.failure(error))
                 }
             }
     }

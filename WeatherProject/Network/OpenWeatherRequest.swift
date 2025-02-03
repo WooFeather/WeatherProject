@@ -18,7 +18,7 @@ enum OpenWeatherRequest {
     var endpoint: URL {
         switch self {
         case .currentWeather(let latitude, let longitude):
-            return URL(string: baseURL + "weather?lat=\(latitude)&lon=\(longitude)&appid={API key}")!
+            return URL(string: baseURL + "weather?lat=\(latitude)&lon=\(longitude)&units=metric&appid=\(APIKey.openWeatherAPIKey)")!
         }
     }
     
