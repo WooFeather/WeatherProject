@@ -101,10 +101,9 @@ final class WeatherViewController: UIViewController {
         refreshButton.addTarget(self, action: #selector(refreshButtonTapped), for: .touchUpInside)
     }
     
-    // MARK: - LocationManager Setup
+    // MARK: - Location Setup
     private func setupLocationManager() {
         locationManager.delegate = self
-        
         checkSystemLocation()
     }
     
@@ -113,8 +112,11 @@ final class WeatherViewController: UIViewController {
             if CLLocationManager.locationServicesEnabled() {
                 self.checkAuthorizationStatus()
             } else {
+                print("❌SYSTEM DENIED")
+                self.setDefaultRegionAndAnnotation()
                 DispatchQueue.main.async {
-                    // 지도 중심을 도봉캠퍼스로 옮기고 사용자에게 알럿 띄우고 설정으로 이동하기
+                    // TODO: 사용자에게 알럿 띄우고 설정으로 이동하기
+                    
                 }
             }
         }
@@ -126,41 +128,78 @@ final class WeatherViewController: UIViewController {
         switch status {
         case .notDetermined:
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.requestWhenInUseAuthorization()
         case .denied:
-            // 지도 중심을 도봉캠퍼스로 옮기고 사용자에게 알럿 띄우고 설정으로 이동하기
+            // TODO: 사용자에게 알럿 띄우고 설정으로 이동하기
+            print("❌DENIED")
+            setDefaultRegionAndAnnotation()
         case .authorizedWhenInUse:
-            // OpenWeatherAPI 호출
-            // 현재 위치에 시스템 어노테이션 표시
+            print("✅AUTHORIZED")
+            
+            locationManager.startUpdatingLocation()
         default:
             print("권한 확인 실패")
         }
     }
     
+    private func setRegionAndAnnotation(center: CLLocationCoordinate2D) {
+        let region = MKCoordinateRegion(center: center, latitudinalMeters: 500, longitudinalMeters: 500)
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = center
+        
+        mapView.setRegion(region, animated: true)
+        mapView.showAnnotations([annotation], animated: true)
+    }
+    
+    private func setDefaultRegionAndAnnotation() {
+        let coordinate = CLLocationCoordinate2D(latitude: 37.65425433473966, longitude: 127.04988768252423)
+        let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 500, longitudinalMeters: 500)
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        
+        mapView.setRegion(region, animated: true)
+        DispatchQueue.main.async {
+            self.mapView.showAnnotations([annotation], animated: true)
+        }
+    }
+    
     // MARK: - Actions
     @objc private func currentLocationButtonTapped() {
-        // 현재 위치 가져오기 구현
+        checkSystemLocation()
     }
     
     @objc private func refreshButtonTapped() {
-        // 날씨 새로고침 구현 (API 재호출)
+        // TODO: 날씨 새로고침 구현 (API 재호출)
     }
 }
 
 // MARK: - Extension
 extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        <#code#>
+        print(#function)
+        // TODO: OpenWeatherAPI 호출
+        // TODO: 현재 위치에 시스템 어노테이션 표시
+        
+        if let coordinate = locations.last?.coordinate {
+            setRegionAndAnnotation(center: coordinate)
+        } else {
+            setDefaultRegionAndAnnotation()
+        }
+        
+        locationManager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
-        <#code#>
+        print(#function)
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        <#code#>
+        print(#function)
+        checkSystemLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        <#code#>
+        print(#function)
+        checkSystemLocation()
     }
 }
