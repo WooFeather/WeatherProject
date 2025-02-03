@@ -56,6 +56,12 @@ final class WeatherViewController: UIViewController {
         return button
     }()
     
+//    private var temp: Double?
+//    private var minTemp: Double?
+//    private var maxTemp: Double?
+//    private var humidity: Double?
+//    private var windSpeed: Double?
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,6 +109,18 @@ final class WeatherViewController: UIViewController {
         refreshButton.addTarget(self, action: #selector(refreshButtonTapped), for: .touchUpInside)
     }
     
+    
+//    private func setupWeatherInfoLabel() {
+//        weatherInfoLabel.text =
+//        """
+//        \(Date().toString())
+//        현재온도: \(temp ?? 0.0)°C
+//        최저온도: \(minTemp ?? 0.0)°C
+//        최고온도: \(maxTemp ?? 0.0)°C
+//        풍속: \(windSpeed ?? 0.0)m/s
+//        습도: \(humidity ?? 0.0)%
+//        """
+//    }
     // MARK: - Location Setup
     private func setupLocationManager() {
         locationManager.delegate = self
@@ -115,6 +133,7 @@ final class WeatherViewController: UIViewController {
                 self.checkAuthorizationStatus()
             } else {
                 print("❌SYSTEM DENIED")
+                self.callRequest(latitude: 37.65425433473966, longitude: 127.04988768252423)
                 self.setDefaultRegionAndAnnotation()
                 
                 DispatchQueue.main.async {
@@ -138,6 +157,7 @@ final class WeatherViewController: UIViewController {
             locationManager.requestWhenInUseAuthorization()
         case .denied:
             print("❌DENIED")
+            self.callRequest(latitude: 37.65425433473966, longitude: 127.04988768252423)
             setDefaultRegionAndAnnotation()
             
             DispatchQueue.main.async {
@@ -183,13 +203,48 @@ final class WeatherViewController: UIViewController {
         }
     }
     
+    // MARK: - Networking Setup
+    private func callRequest(latitude: Double, longitude: Double) {
+        NetworkManager.shared.callOpenWeatherAPI(api: .currentWeather(latitude: latitude, longitude: longitude)) { response in
+            switch response {
+            case .success(let success):
+//                self.temp = success.main.temp
+//                self.minTemp = success.main.minTemp
+//                self.maxTemp = success.main.maxTemp
+//                self.humidity = success.main.humidity
+//                self.windSpeed = success.wind.speed
+                
+                self.weatherInfoLabel.text =
+                """
+                \(Date().toString())
+                현재온도: \(success.main.temp)°C
+                최저온도: \(success.main.minTemp)°C
+                최고온도: \(success.main.maxTemp)°C
+                풍속: \(success.wind.speed)m/s
+                습도: \(success.main.humidity)%
+                """
+            case .failure(_):
+                self.showAlert(title: "네트워크 오류", message: "네트워크 오류로 날씨정보를 가져올 수 없습니다.", button: "닫기") {
+                    self.dismiss(animated: true)
+                }
+            }
+        }
+    }
+    
     // MARK: - Actions
     @objc private func currentLocationButtonTapped() {
         checkSystemLocation()
     }
     
     @objc private func refreshButtonTapped() {
-        // TODO: 날씨 새로고침 구현 (API 재호출)
+        // 이렇게 날씨정보만 다시 조회해도 될까요?
+        self.weatherInfoLabel.text = "날씨 정보를 불러오는 중..."
+        let coordinate = locationManager.location?.coordinate
+        callRequest(latitude: coordinate?.latitude ?? 0.0, longitude: coordinate?.longitude ?? 0.0)
+        
+        // 혹은, 권한이 바뀌었을때 분기처리를 대비해서 다시 checkSystemLocation()를 호출하는게 나을까요?
+        // 근데 이렇게 하면 현재위치 버튼과 같은 동작이어서 위의 동작으로 구현했습니다!
+        // checkSystemLocation()
     }
 }
 
@@ -197,12 +252,16 @@ final class WeatherViewController: UIViewController {
 extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print(#function)
-        // TODO: OpenWeatherAPI 호출
         
         if let coordinate = locations.last?.coordinate {
             setRegionAndAnnotation(center: coordinate)
+            callRequest(latitude: coordinate.latitude, longitude: coordinate.longitude)
+//            DispatchQueue.main.async {
+//                self.setupWeatherInfoLabel()
+//            }
         } else {
             setDefaultRegionAndAnnotation()
+            callRequest(latitude: 37.65425433473966, longitude: 127.04988768252423)
         }
         
         locationManager.stopUpdatingLocation()
