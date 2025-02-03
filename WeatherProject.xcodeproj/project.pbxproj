@@ -9,10 +9,12 @@
 /* Begin PBXBuildFile section */
 		7930630D2D50AD3100D61972 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 7930630C2D50AD3100D61972 /* Alamofire */; };
 		793063102D50AD3B00D61972 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7930630F2D50AD3B00D61972 /* SnapKit */; };
+		79E906D52D50DDC000D238E7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 79E906D42D50DDC000D238E7 /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		793062EE2D50AC9B00D61972 /* WeatherProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		793062EE2D50AC9B00D61972 /* WeatherProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = WeatherProject.app; path = "/Users/jouhyeon/Desktop/SeSAC/Assignment/A_25th_WeatherProject/WeatherProject/build/Debug-iphoneos/WeatherProject.app"; sourceTree = "<absolute>"; };
+		79E906D42D50DDC000D238E7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,17 +54,9 @@
 		793062E52D50AC9B00D61972 = {
 			isa = PBXGroup;
 			children = (
+				79E906D42D50DDC000D238E7 /* .gitignore */,
 				793062F02D50AC9B00D61972 /* WeatherProject */,
-				793062EF2D50AC9B00D61972 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		793062EF2D50AC9B00D61972 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				793062EE2D50AC9B00D61972 /* WeatherProject.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,7 +115,7 @@
 				7930630E2D50AD3B00D61972 /* XCRemoteSwiftPackageReference "SnapKit" */,
 			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 793062EF2D50AC9B00D61972 /* Products */;
+			productRefGroup = 793062E52D50AC9B00D61972;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -135,6 +129,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79E906D52D50DDC000D238E7 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
