@@ -5,8 +5,6 @@
 //  Created by Jack on 2/3/25.
 //
 
-// DispatchQueue.main.async { } 코드가 많은 이유는 Thread관련 오류가 계속 떠서 일단 UI그리는 코드엔 다 붙여놨는데, 시뮬레이터로 테스틀했을때만 발생하는듯합니다.
-
 import UIKit
 import CoreLocation
 import MapKit
@@ -58,11 +56,18 @@ final class WeatherViewController: UIViewController {
         return button
     }()
     
-//    private var temp: Double?
-//    private var minTemp: Double?
-//    private var maxTemp: Double?
-//    private var humidity: Double?
-//    private var windSpeed: Double?
+    private let photoButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "photo"), for: .normal)
+        button.backgroundColor = .white
+        button.tintColor = .systemBlue
+        button.layer.cornerRadius = 25
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowOpacity = 0.2
+        button.layer.shadowRadius = 4
+        return button
+    }()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -77,7 +82,7 @@ final class WeatherViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        [mapView, weatherInfoLabel, currentLocationButton, refreshButton].forEach {
+        [mapView, weatherInfoLabel, currentLocationButton, refreshButton, photoButton].forEach {
             view.addSubview($0)
         }
     }
@@ -104,25 +109,20 @@ final class WeatherViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
             make.width.height.equalTo(50)
         }
+        
+        photoButton.snp.makeConstraints { make in
+            make.centerX.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
+            make.width.height.equalTo(50)
+        }
     }
     
     private func setupActions() {
         currentLocationButton.addTarget(self, action: #selector(currentLocationButtonTapped), for: .touchUpInside)
         refreshButton.addTarget(self, action: #selector(refreshButtonTapped), for: .touchUpInside)
+        photoButton.addTarget(self, action: #selector(photoButtonTapped), for: .touchUpInside)
     }
     
-    
-//    private func setupWeatherInfoLabel() {
-//        weatherInfoLabel.text =
-//        """
-//        \(Date().toString())
-//        현재온도: \(temp ?? 0.0)°C
-//        최저온도: \(minTemp ?? 0.0)°C
-//        최고온도: \(maxTemp ?? 0.0)°C
-//        풍속: \(windSpeed ?? 0.0)m/s
-//        습도: \(humidity ?? 0.0)%
-//        """
-//    }
     // MARK: - Location Setup
     private func setupLocationManager() {
         locationManager.delegate = self
@@ -212,12 +212,6 @@ final class WeatherViewController: UIViewController {
         NetworkManager.shared.callOpenWeatherAPI(api: .currentWeather(latitude: latitude, longitude: longitude)) { response in
             switch response {
             case .success(let success):
-//                self.temp = success.main.temp
-//                self.minTemp = success.main.minTemp
-//                self.maxTemp = success.main.maxTemp
-//                self.humidity = success.main.humidity
-//                self.windSpeed = success.wind.speed
-                
                 DispatchQueue.main.async {
                     self.weatherInfoLabel.text =
                     """
@@ -256,6 +250,11 @@ final class WeatherViewController: UIViewController {
         // 근데 이렇게 하면 현재위치 버튼과 같은 동작이어서 위의 동작으로 구현했습니다!
         // checkSystemLocation()
     }
+    
+    @objc private func photoButtonTapped() {
+        let vc = PhotoViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 // MARK: - Extension
@@ -266,9 +265,6 @@ extension WeatherViewController: CLLocationManagerDelegate {
         if let coordinate = locations.last?.coordinate {
             setRegionAndAnnotation(center: coordinate)
             callRequest(latitude: coordinate.latitude, longitude: coordinate.longitude)
-//            DispatchQueue.main.async {
-//                self.setupWeatherInfoLabel()
-//            }
         } else {
             setDefaultRegionAndAnnotation()
             callRequest(latitude: 37.65425433473966, longitude: 127.04988768252423)
