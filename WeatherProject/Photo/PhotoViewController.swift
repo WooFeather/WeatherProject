@@ -19,10 +19,13 @@ final class PhotoViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.itemSize = CGSize(width: cellWidth / 3, height: cellWidth / 3)
-        layout.sectionInset = UIEdgeInsets(top: 0, left: sectionInset, bottom: 0, right: sectionInset)
+        layout.sectionInset = UIEdgeInsets(top: sectionInset, left: sectionInset, bottom: sectionInset, right: sectionInset)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .lightGray
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: PhotoCollectionViewCell.id)
         
         return collectionView
     }()
@@ -43,7 +46,7 @@ final class PhotoViewController: UIViewController {
     
     private func setupConstraints() {
         photoCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(8)
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.horizontalEdges.bottom.equalTo(view)
         }
     }
@@ -56,5 +59,25 @@ final class PhotoViewController: UIViewController {
     // MARK: - Actions
     @objc private func plusButtonTapped() {
         print(#function)
+    }
+}
+
+// MARK: - Extension
+
+extension PhotoViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // TODO: ImagePicker의 image들을 담는 배열을 만들어서 그 배열의 개수만큼으로 수정
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = photoCollectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.id, for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(#function, indexPath.item)
+        // TODO: WeatherVC로 해당 이미지 역값전달
     }
 }
