@@ -12,10 +12,11 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     
     static let id = "PhotoCollectionViewCell"
     
-    private let photoImageView: UIImageView = {
+    let photoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .brown
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         
         return imageView
     }()

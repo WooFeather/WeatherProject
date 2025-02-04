@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhotosUI
 import SnapKit
 
 final class PhotoViewController: UIViewController {
@@ -29,6 +30,8 @@ final class PhotoViewController: UIViewController {
         
         return collectionView
     }()
+    
+    private var imageList: [UIImage] = []
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -53,25 +56,55 @@ final class PhotoViewController: UIViewController {
     
     private func setupNavigation() {
         navigationItem.title = "Photo"
-        navigationItem.setRightBarButton(UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(plusButtonTapped)), animated: true)
+        navigationItem.setRightBarButton(UIBarButtonItem(image: UIImage(systemName: "plus"), style: .plain, target: self, action: #selector(addButtonTapped)), animated: true)
     }
     
     // MARK: - Actions
-    @objc private func plusButtonTapped() {
-        print(#function)
+    @objc private func addButtonTapped() {
+        var configuration = PHPickerConfiguration()
+        configuration.filter = .images
+        configuration.selectionLimit = 5
+        configuration.mode = .default
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        
+        present(picker, animated: true)
     }
 }
 
 // MARK: - Extension
 
+extension PhotoViewController: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        for i in 0..<results.count {
+            let itemProvider = results[i].itemProvider
+            
+            if itemProvider.canLoadObject(ofClass: UIImage.self) {
+                itemProvider.loadObject(ofClass: UIImage.self) { image, error in
+                    self.imageList.append(image as? UIImage ?? UIImage())
+                    
+                    DispatchQueue.main.async {
+                        self.photoCollectionView.reloadData()
+                    }
+                }
+            }
+        }
+        
+        dismiss(animated: true)
+    }
+}
+
 extension PhotoViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // TODO: ImagePicker의 image들을 담는 배열을 만들어서 그 배열의 개수만큼으로 수정
-        return 10
+        return imageList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = photoCollectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.id, for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
+        let item = imageList[indexPath.item]
+        
+        cell.photoImageView.image = item
         
         return cell
     }
