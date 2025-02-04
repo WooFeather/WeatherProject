@@ -13,7 +13,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		796DF27B2D51EB14006A4427 /* WeatherProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = WeatherProject.app; path = "/Users/jouhyeon/Desktop/SeSAC/Assignment/A_25th_WeatherProject/WeatherProject/build/Debug-iphoneos/WeatherProject.app"; sourceTree = "<absolute>"; };
+		796DF3C02D51FDAE006A4427 /* WeatherProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = WeatherProject.app; path = "/Users/jouhyeon/Desktop/SeSAC/Assignment/A_25th_WeatherProject/WeatherProject/build/Debug-iphoneos/WeatherProject.app"; sourceTree = "<absolute>"; };
 		79E906D42D50DDC000D238E7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,7 +83,7 @@
 				7930630F2D50AD3B00D61972 /* SnapKit */,
 			);
 			productName = WeatherProject;
-			productReference = 796DF27B2D51EB14006A4427 /* WeatherProject.app */;
+			productReference = 796DF3C02D51FDAE006A4427 /* WeatherProject.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */

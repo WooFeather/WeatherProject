@@ -23,7 +23,6 @@ final class PhotoViewController: UIViewController {
         layout.sectionInset = UIEdgeInsets(top: sectionInset, left: sectionInset, bottom: sectionInset, right: sectionInset)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .lightGray
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: PhotoCollectionViewCell.id)
@@ -32,6 +31,7 @@ final class PhotoViewController: UIViewController {
     }()
     
     private var imageList: [UIImage] = []
+    var imageContents: ((UIImage) -> Void)?
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -82,7 +82,7 @@ extension PhotoViewController: PHPickerViewControllerDelegate {
             
             if itemProvider.canLoadObject(ofClass: UIImage.self) {
                 itemProvider.loadObject(ofClass: UIImage.self) { image, error in
-                    self.imageList.append(image as? UIImage ?? UIImage())
+                    self.imageList.insert(image as? UIImage ?? UIImage(), at: 0)
                     
                     DispatchQueue.main.async {
                         self.photoCollectionView.reloadData()
@@ -111,6 +111,9 @@ extension PhotoViewController: UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(#function, indexPath.item)
-        // TODO: WeatherVC로 해당 이미지 역값전달
+        let item = imageList[indexPath.item]
+        
+        imageContents?(item)
+        navigationController?.popViewController(animated: true)
     }
 }

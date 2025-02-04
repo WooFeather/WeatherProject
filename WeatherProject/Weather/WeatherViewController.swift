@@ -69,6 +69,14 @@ final class WeatherViewController: UIViewController {
         return button
     }()
     
+    private let photoImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.backgroundColor = .brown
+        return imageView
+    }()
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,7 +90,7 @@ final class WeatherViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .white
         
-        [mapView, weatherInfoLabel, currentLocationButton, refreshButton, photoButton].forEach {
+        [mapView, weatherInfoLabel, currentLocationButton, refreshButton, photoButton, photoImageView].forEach {
             view.addSubview($0)
         }
     }
@@ -95,7 +103,13 @@ final class WeatherViewController: UIViewController {
         
         weatherInfoLabel.snp.makeConstraints { make in
             make.top.equalTo(mapView.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.leading.equalToSuperview().inset(20)
+        }
+        
+        photoImageView.snp.makeConstraints { make in
+            make.top.equalTo(mapView.snp.bottom).offset(20)
+            make.trailing.equalToSuperview().inset(20)
+            make.size.equalTo(100)
         }
         
         currentLocationButton.snp.makeConstraints { make in
@@ -253,6 +267,9 @@ final class WeatherViewController: UIViewController {
     
     @objc private func photoButtonTapped() {
         let vc = PhotoViewController()
+        vc.imageContents = { image in
+            self.photoImageView.image = image
+        }
         navigationController?.pushViewController(vc, animated: true)
     }
 }
