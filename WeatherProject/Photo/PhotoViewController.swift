@@ -12,7 +12,7 @@ import SnapKit
 final class PhotoViewController: UIViewController {
     
     private lazy var photoCollectionView: UICollectionView = {
-        let sectionInset: CGFloat = 10
+        let sectionInset: CGFloat = 0
         let cellSpacing: CGFloat = 10
         let deviceWidth = UIScreen.main.bounds.width
         let cellWidth = deviceWidth - (sectionInset * 2) - (cellSpacing * 2)
